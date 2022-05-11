@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.resurrection.composebase.util.resource.Status
-import com.resurrection.composebase.util.resource.StateResource
+import com.resurrection.composebase.data.model.CryptoList
 import com.resurrection.composebase.data.model.CryptoListItem
 import com.resurrection.composebase.ui.screens.viewmodel.CryptoListViewModel
+import com.resurrection.composebase.util.resource.*
 
 @Composable
 fun CryptoListScreen(
@@ -55,6 +55,7 @@ fun CryptoListScreen(
                 //viewModel.searchCryptoList(it)
             }
             Spacer(modifier = Modifier.height(16.dp))
+            EvenChanger()
             CryptoList(navController = navController)
         }
     }
@@ -108,13 +109,16 @@ fun CryptoList(
     navController: NavController,
     viewModel: CryptoListViewModel = hiltViewModel()
 ) {
+    println("-----> CryptoList yenilendi ")
 
     viewModel.cryptoList.observeState(
         success = {
+            println("---> success çalıştı")
             it?.let {
                 CryptoListView(cryptos = it, navController = navController)
             }
         }, loading = {
+            println("---> loading çalıştı")
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
@@ -124,11 +128,11 @@ fun CryptoList(
             }
         },
         error = {
+            println("----> error çalıştı")
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
-                CircularProgressIndicator(color = MaterialTheme.colors.primary)
                 RetryView(error = it!!.message) {
                     viewModel.loadCryptos()
                 }
@@ -155,7 +159,23 @@ fun <T> MutableState<StateResource<T>>.observeState(
         Status.ERROR -> error?.invoke(Throwable(errorMessage.toString()))
     }
 }
+@Composable
+fun EvenChanger(viewModel: CryptoListViewModel = hiltViewModel()) {
+    Row {
+        Button(onClick = {
+            val tempList = CryptoList()
+            viewModel.cryptoList.value.data.value?.forEach { tempList.add(it) }
+            viewModel.cryptoList.postSuccess(tempList)
+        }) { Text(text = "Success") }
+        Button(onClick = {
+            viewModel.cryptoList.postError("errorrrrr")
+        }) { Text(text = "Error") }
+        Button(onClick = {
+            viewModel.cryptoList.postLoading(true)
+        }) { Text(text = "Loading") }
+    }
 
+}
 
 @Composable
 fun CryptoListView(cryptos: List<CryptoListItem>?, navController: NavController) {
@@ -211,3 +231,4 @@ fun RetryView(
         }
     }
 }
+

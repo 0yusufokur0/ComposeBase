@@ -18,7 +18,6 @@ fun <T> mutableStateResourceOf(
 fun <T> MutableState<StateResource<T>>.postSuccess(data: T?) {
     val resource = this.value
     resource.data.value = data
-    resource.loading.value = false
     resource.status.value = Status.SUCCESS
     this.value = resource
 }
@@ -33,7 +32,6 @@ fun <T> MutableState<StateResource<T>>.postLoading(loading: Boolean?) {
 fun <T> MutableState<StateResource<T>>.postError(message: String?) {
     val resource = this.value
     resource.message.value = message
-    resource.loading.value = false
     resource.status.value = Status.ERROR
     this.value = resource
 }
@@ -51,7 +49,7 @@ fun <T> MutableState<StateResource<T>>.postResource(
     resource.status.value = status
     this.value = resource
 }
-
+/*
 val <T> MutableState<StateResource<T>>.data get() = this.value.data.value
 val <T> MutableState<StateResource<T>>.message get() = this.value.message.value
-val <T> MutableState<StateResource<T>>.loading get() = this.value.loading.value
+val <T> MutableState<StateResource<T>>.loading get() = this.value.loading.value*/
