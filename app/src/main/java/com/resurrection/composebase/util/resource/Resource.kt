@@ -1,4 +1,4 @@
-package com.atilsamancioglu.cryptocrazycompose.util
+package com.resurrection.composebase.util.resource
 
 sealed class Resource<T>(val data: T? = null, val message: String? = null) {
     class Success<T>(data: T) : Resource<T>(data)

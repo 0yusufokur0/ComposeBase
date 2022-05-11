@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.atilsamancioglu.cryptocrazycompose.util.Resource
+import com.resurrection.composebase.util.resource.Resource
 import com.resurrection.composebase.ui.screens.viewmodel.CryptoDetailViewModel
 import com.resurrection.composebase.data.model.Crypto
 

@@ -1,6 +1,6 @@
 package com.resurrection.composebase.data.repository
 
-import com.atilsamancioglu.cryptocrazycompose.util.Resource
+import com.resurrection.composebase.util.resource.Resource
 import com.resurrection.composebase.data.model.Crypto
 import com.resurrection.composebase.data.model.CryptoList
 import com.resurrection.composebase.data.remote.CryptoAPI

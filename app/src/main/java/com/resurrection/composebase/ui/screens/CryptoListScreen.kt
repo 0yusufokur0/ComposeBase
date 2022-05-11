@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.atilsamancioglu.cryptocrazycompose.util.Status
-import com.atilsamancioglu.cryptocrazycompose.util.TestResource
+import com.resurrection.composebase.util.resource.Status
+import com.resurrection.composebase.util.resource.StateResource
 import com.resurrection.composebase.data.model.CryptoListItem
 import com.resurrection.composebase.ui.screens.viewmodel.CryptoListViewModel
 
@@ -138,7 +138,7 @@ fun CryptoList(
 }
 
 @Composable
-fun <T> MutableState<TestResource<T>>.observeState(
+fun <T> MutableState<StateResource<T>>.observeState(
     success: @Composable (T?) -> Unit,
     loading: @Composable (() -> Unit)? = null,
     error: @Composable ((Throwable?) -> Unit)? = null
