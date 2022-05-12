@@ -1,50 +1,47 @@
-package com.resurrection.composebase.util.resource
+package com.resurrection.composebase.util.resource.stateful
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import com.resurrection.composebase.util.resource.Status
 
 fun <T> mutableStateResourceOf(
     data: T? = null,
     message: String? = null,
     loading: Boolean? = false
-): MutableState<StateResource<T>> {
-    val resource = StateResource<T>()
+): MutableState<StatefulResource<T>> {
+    val resource = StatefulResource<T>()
     resource.data.value = data
     resource.message.value = message
-    resource.loading.value = loading
     return mutableStateOf(resource)
 }
 
-fun <T> MutableState<StateResource<T>>.postSuccess(data: T?) {
+fun <T> MutableState<StatefulResource<T>>.postSuccess(data: T?) {
     val resource = this.value
     resource.data.value = data
     resource.status.value = Status.SUCCESS
     this.value = resource
 }
 
-fun <T> MutableState<StateResource<T>>.postLoading(loading: Boolean?) {
+fun <T> MutableState<StatefulResource<T>>.postLoading() {
     val resource = this.value
-    resource.loading.value = loading
     resource.status.value = Status.LOADING
     this.value = resource
 }
 
-fun <T> MutableState<StateResource<T>>.postError(message: String?) {
+fun <T> MutableState<StatefulResource<T>>.postError(message: String?) {
     val resource = this.value
     resource.message.value = message
     resource.status.value = Status.ERROR
     this.value = resource
 }
 
-fun <T> MutableState<StateResource<T>>.postResource(
+fun <T> MutableState<StatefulResource<T>>.postResource(
     status: Status,
     data: T? = null,
     message: String? = null,
-    loading: Boolean = false
 ) {
     val resource = this.value
     resource.data.value = data
-    resource.loading.value = loading
     resource.message.value = message
     resource.status.value = status
     this.value = resource

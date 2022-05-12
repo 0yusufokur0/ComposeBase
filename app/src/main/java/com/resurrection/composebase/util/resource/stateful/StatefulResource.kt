@@ -1,10 +1,10 @@
-package com.resurrection.composebase.util.resource
+package com.resurrection.composebase.util.resource.stateful
 
 import androidx.compose.runtime.mutableStateOf
+import com.resurrection.composebase.util.resource.Status
 
-class StateResource<T>(){
+class StatefulResource<T>(){
     var data = mutableStateOf<T?>(null)
     var message = mutableStateOf<String?>("")
-    var loading = mutableStateOf<Boolean?>(false)
     var status = mutableStateOf(Status.LOADING)
 }

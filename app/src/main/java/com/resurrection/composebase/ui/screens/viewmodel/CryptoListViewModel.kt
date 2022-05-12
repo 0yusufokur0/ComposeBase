@@ -7,6 +7,7 @@ import com.resurrection.composebase.data.model.CryptoList
 import com.resurrection.composebase.data.model.CryptoListItem
 import com.resurrection.composebase.data.repository.CryptoRepository
 import com.resurrection.composebase.util.resource.*
+import com.resurrection.composebase.util.resource.stateful.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -35,17 +36,17 @@ class CryptoListViewModel @Inject constructor(
     }
 
     fun loadCryptos() =fetchStateResource(
-        state = cryptoList,
+        stateful = cryptoList,
         request = { repository.getCryptoList() },
     )
 
     fun <T> fetchStateResource(
         condition: Boolean = true,
-        state: MutableState<StateResource<T>>,
+        stateful: MutableState<StatefulResource<T>>,
         request: suspend () -> Flow<Resource<T>>,
-        success: (Resource<T>) -> Unit = { state.postSuccess(it.data) },
-        loading: () -> Unit = { state.postLoading(true) },
-        error: (Throwable) -> Unit = { state.postError(it.message) }
+        success: (Resource<T>) -> Unit = { stateful.postSuccess(it.data) },
+        loading: () -> Unit = { stateful.postLoading() },
+        error: (Throwable) -> Unit = { stateful.postError(it.message) }
     ) = viewModelScope.launch {
             request()
                 .onStart { loading() }

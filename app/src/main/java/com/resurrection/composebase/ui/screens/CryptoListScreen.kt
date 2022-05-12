@@ -25,6 +25,10 @@ import com.resurrection.composebase.data.model.CryptoList
 import com.resurrection.composebase.data.model.CryptoListItem
 import com.resurrection.composebase.ui.screens.viewmodel.CryptoListViewModel
 import com.resurrection.composebase.util.resource.*
+import com.resurrection.composebase.util.resource.stateful.StatefulResource
+import com.resurrection.composebase.util.resource.stateful.postError
+import com.resurrection.composebase.util.resource.stateful.postLoading
+import com.resurrection.composebase.util.resource.stateful.postSuccess
 
 @Composable
 fun CryptoListScreen(
@@ -142,20 +146,17 @@ fun CryptoList(
 }
 
 @Composable
-fun <T> MutableState<StateResource<T>>.observeState(
+fun <T> MutableState<StatefulResource<T>>.observeState(
     success: @Composable (T?) -> Unit,
     loading: @Composable (() -> Unit)? = null,
     error: @Composable ((Throwable?) -> Unit)? = null
 ) {
     val data by remember { this.value.data }
     val errorMessage by remember { this.value.message }
-    val isLoading by remember { this.value.loading }
     val status by remember { this.value.status }
     when (status) {
         Status.SUCCESS -> success.invoke(data)
-        Status.LOADING -> {
-            if (isLoading!!) loading?.invoke()
-        }
+        Status.LOADING -> loading?.invoke()
         Status.ERROR -> error?.invoke(Throwable(errorMessage.toString()))
     }
 }
@@ -171,7 +172,7 @@ fun EvenChanger(viewModel: CryptoListViewModel = hiltViewModel()) {
             viewModel.cryptoList.postError("errorrrrr")
         }) { Text(text = "Error") }
         Button(onClick = {
-            viewModel.cryptoList.postLoading(true)
+            viewModel.cryptoList.postLoading()
         }) { Text(text = "Loading") }
     }
 
