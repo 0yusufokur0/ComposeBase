@@ -5,6 +5,6 @@ import com.resurrection.composebase.util.resource.Status
 
 class StatefulResource<T>(){
     var data = mutableStateOf<T?>(null)
-    var message = mutableStateOf<String?>("")
+    var throwable = mutableStateOf<Throwable?>(Throwable(""))
     var status = mutableStateOf(Status.LOADING)
 }

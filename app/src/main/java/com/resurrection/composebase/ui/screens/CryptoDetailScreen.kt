@@ -110,7 +110,7 @@ fun CryptoDetailScreen(
                 }
 
                 is Resource.Error -> {
-                    Text(cryptoItem.message!!)
+                    Text(cryptoItem.throwable?.localizedMessage.toString())
                 }
 
                 is Resource.Loading -> {

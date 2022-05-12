@@ -4,14 +4,15 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.resurrection.composebase.util.resource.Status
 
-fun <T> mutableStateResourceOf(
+fun <T> mutableStatefulResourceOf(
+    status: Status,
     data: T? = null,
-    message: String? = null,
-    loading: Boolean? = false
+    throwable: Throwable? = null,
 ): MutableState<StatefulResource<T>> {
     val resource = StatefulResource<T>()
+    resource.status.value = status
     resource.data.value = data
-    resource.message.value = message
+    resource.throwable.value = throwable
     return mutableStateOf(resource)
 }
 
@@ -28,22 +29,10 @@ fun <T> MutableState<StatefulResource<T>>.postLoading() {
     this.value = resource
 }
 
-fun <T> MutableState<StatefulResource<T>>.postError(message: String?) {
+fun <T> MutableState<StatefulResource<T>>.postError(throwable: Throwable?) {
     val resource = this.value
-    resource.message.value = message
+    resource.throwable.value = throwable
     resource.status.value = Status.ERROR
-    this.value = resource
-}
-
-fun <T> MutableState<StatefulResource<T>>.postResource(
-    status: Status,
-    data: T? = null,
-    message: String? = null,
-) {
-    val resource = this.value
-    resource.data.value = data
-    resource.message.value = message
-    resource.status.value = status
     this.value = resource
 }
 /*

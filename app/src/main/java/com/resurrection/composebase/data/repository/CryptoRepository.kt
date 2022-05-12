@@ -23,7 +23,7 @@ class CryptoRepository@Inject constructor(
         val response = try {
             api.getCrypto()
         } catch(e: Exception) {
-            return Resource.Error("Error")
+            return Resource.Error(Throwable("Error"))
         }
         return Resource.Success(response)
     }
@@ -42,7 +42,7 @@ suspend fun <T> getResourceByNetworkRequest(request: suspend () -> Response<T>):
         }
     } catch (e: Exception) {
         e.printStackTrace()
-        return Resource.Error(e.localizedMessage)
+        return Resource.Error(e)
     }
     return Resource.Loading()
 }

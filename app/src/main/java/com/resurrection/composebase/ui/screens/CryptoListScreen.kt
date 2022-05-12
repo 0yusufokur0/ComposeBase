@@ -29,6 +29,10 @@ import com.resurrection.composebase.util.resource.stateful.StatefulResource
 import com.resurrection.composebase.util.resource.stateful.postError
 import com.resurrection.composebase.util.resource.stateful.postLoading
 import com.resurrection.composebase.util.resource.stateful.postSuccess
+import com.resurrection.composebase.util.resource.stateless.StatelessResource
+import com.resurrection.composebase.util.resource.stateless.postError
+import com.resurrection.composebase.util.resource.stateless.postLoading
+import com.resurrection.composebase.util.resource.stateless.postSuccess
 
 @Composable
 fun CryptoListScreen(
@@ -59,7 +63,7 @@ fun CryptoListScreen(
                 //viewModel.searchCryptoList(it)
             }
             Spacer(modifier = Modifier.height(16.dp))
-            EvenChanger()
+            StatelessEventChanger()
             CryptoList(navController = navController)
         }
     }
@@ -115,7 +119,7 @@ fun CryptoList(
 ) {
     println("-----> CryptoList yenilendi ")
 
-    viewModel.cryptoList.observeState(
+    viewModel.cryptoList.observeStateless(
         success = {
             println("---> success çalıştı")
             it?.let {
@@ -146,13 +150,13 @@ fun CryptoList(
 }
 
 @Composable
-fun <T> MutableState<StatefulResource<T>>.observeState(
+fun <T> MutableState<StatefulResource<T>>.observeStateful(
     success: @Composable (T?) -> Unit,
     loading: @Composable (() -> Unit)? = null,
     error: @Composable ((Throwable?) -> Unit)? = null
 ) {
     val data by remember { this.value.data }
-    val errorMessage by remember { this.value.message }
+    val errorMessage by remember { this.value.throwable }
     val status by remember { this.value.status }
     when (status) {
         Status.SUCCESS -> success.invoke(data)
@@ -160,16 +164,50 @@ fun <T> MutableState<StatefulResource<T>>.observeState(
         Status.ERROR -> error?.invoke(Throwable(errorMessage.toString()))
     }
 }
+
 @Composable
-fun EvenChanger(viewModel: CryptoListViewModel = hiltViewModel()) {
+fun <T> MutableState<StatelessResource<T>>.observeStateless(
+    success: @Composable (T?) -> Unit,
+    loading: @Composable (() -> Unit)? = null,
+    error: @Composable ((Throwable?) -> Unit)? = null
+) {
+    val resource = this.value
+    val status by remember { this.value.status }
+    when (status) {
+        Status.SUCCESS -> success.invoke(resource.data)
+        Status.LOADING -> loading?.invoke()
+        Status.ERROR -> error?.invoke(resource.throwable)
+    }
+}
+
+@Composable
+fun StatelessEventChanger(viewModel: CryptoListViewModel = hiltViewModel()) {
     Row {
         Button(onClick = {
             val tempList = CryptoList()
-            viewModel.cryptoList.value.data.value?.forEach { tempList.add(it) }
+            viewModel.cryptoList.value.data?.forEach { tempList.add(it) }
             viewModel.cryptoList.postSuccess(tempList)
         }) { Text(text = "Success") }
         Button(onClick = {
-            viewModel.cryptoList.postError("errorrrrr")
+            viewModel.cryptoList.postError(Throwable("errorrrrr"))
+        }) { Text(text = "Error") }
+        Button(onClick = {
+            viewModel.cryptoList.postLoading()
+        }) { Text(text = "Loading") }
+    }
+
+}
+
+@Composable
+fun StatefulEventChanger(viewModel: CryptoListViewModel = hiltViewModel()) {
+    Row {
+        Button(onClick = {
+            val tempList = CryptoList()
+            viewModel.cryptoList.value.data?.forEach { tempList.add(it) }
+            viewModel.cryptoList.postSuccess(tempList)
+        }) { Text(text = "Success") }
+        Button(onClick = {
+            viewModel.cryptoList.postError(Throwable("errorrrrr"))
         }) { Text(text = "Error") }
         Button(onClick = {
             viewModel.cryptoList.postLoading()

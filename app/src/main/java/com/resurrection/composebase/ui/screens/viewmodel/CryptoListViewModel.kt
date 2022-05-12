@@ -8,6 +8,7 @@ import com.resurrection.composebase.data.model.CryptoListItem
 import com.resurrection.composebase.data.repository.CryptoRepository
 import com.resurrection.composebase.util.resource.*
 import com.resurrection.composebase.util.resource.stateful.*
+import com.resurrection.composebase.util.resource.stateless.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -21,32 +22,24 @@ class CryptoListViewModel @Inject constructor(
     private val repository: CryptoRepository
 ) : ViewModel() {
 
-    var cryptoList = mutableStateResourceOf<CryptoList>()
-
-
-/*
-    var testCryptoState = TestResource<List<CryptoListItem>>()
-*/
-
-    private var initialCryptoList = listOf<CryptoListItem>()
-    private var isSearchStarting = true
+    var cryptoList = mutableStatelessResourceOf<CryptoList>(Status.LOADING)
 
     init {
         loadCryptos()
     }
 
-    fun loadCryptos() =fetchStateResource(
-        stateful = cryptoList,
+    fun loadCryptos() = fetchStatelessResource(
+        stateless = cryptoList,
         request = { repository.getCryptoList() },
     )
 
-    fun <T> fetchStateResource(
+    fun <T> fetchStatefulResource(
         condition: Boolean = true,
         stateful: MutableState<StatefulResource<T>>,
         request: suspend () -> Flow<Resource<T>>,
         success: (Resource<T>) -> Unit = { stateful.postSuccess(it.data) },
         loading: () -> Unit = { stateful.postLoading() },
-        error: (Throwable) -> Unit = { stateful.postError(it.message) }
+        error: (Throwable) -> Unit = { stateful.postError(it) }
     ) = viewModelScope.launch {
             request()
                 .onStart { loading() }
@@ -55,32 +48,18 @@ class CryptoListViewModel @Inject constructor(
 
     }
 
+    fun <T> fetchStatelessResource(
+        condition: Boolean = true,
+        stateless: MutableState<StatelessResource<T>>,
+        request: suspend () -> Flow<Resource<T>>,
+        success: (Resource<T>) -> Unit = { stateless.postSuccess(it.data) },
+        loading: () -> Unit = { stateless.postLoading() },
+        error: (Throwable) -> Unit = { stateless.postError(it) }
+    ) = viewModelScope.launch {
+        request()
+            .onStart { loading() }
+            .catch { error(it) }
+            .collect { success(it)}
 
-
-
-/*
-    fun searchCryptoList(query: String) {
-        val listToSearch:List<CryptoListItem> = if(isSearchStarting) {
-            cryptoList.value.data!!.value!!
-        } else {
-            initialCryptoList
-        }
-        viewModelScope.launch(Dispatchers.Default) {
-            if(query.isEmpty()) {
-                cryptoList.postSuccess(initialCryptoList)
-                isSearchStarting = true
-                return@launch
-            }
-            val results = listToSearch.filter {
-                it.currency.contains(query.trim(), ignoreCase = true)
-            }
-            if(isSearchStarting) {
-                initialCryptoList = cryptoList.data!!
-                isSearchStarting = false
-            }
-            cryptoList.value.data.value = results
-        }
     }
-*/
-
 }
