@@ -1,4 +1,4 @@
-package com.resurrection.composebase.util.resource
+package com.resurrection.composebase.state
 
 enum class Status {
     SUCCESS,

@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.resurrection.composebase.util.resource.Resource
 import com.resurrection.composebase.ui.screens.viewmodel.CryptoDetailViewModel
 import com.resurrection.composebase.data.model.Crypto
 
@@ -66,7 +65,7 @@ fun CryptoDetailScreen(
 
        //Step 3 -> Best
 
-    val cryptoItem = produceState<Resource<Crypto>>(initialValue = Resource.Loading()) {
+    val cryptoItem = produceState<com.resurrection.composebase.state.Resource<Crypto>>(initialValue = com.resurrection.composebase.state.Resource.Loading()) {
         value = viewModel.getCrypto(id)
     }.value
 
@@ -79,7 +78,7 @@ fun CryptoDetailScreen(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             when(cryptoItem) {
 
-                is Resource.Success -> {
+                is com.resurrection.composebase.state.Resource.Success -> {
                     val selectedCrypto = cryptoItem.data!![0]
                     Text(text = selectedCrypto.name,
                         style = MaterialTheme.typography.h3,
@@ -109,11 +108,11 @@ fun CryptoDetailScreen(
 
                 }
 
-                is Resource.Error -> {
+                is com.resurrection.composebase.state.Resource.Error -> {
                     Text(cryptoItem.throwable?.localizedMessage.toString())
                 }
 
-                is Resource.Loading -> {
+                is com.resurrection.composebase.state.Resource.Loading -> {
                     CircularProgressIndicator(color = MaterialTheme.colors.primary)
                 }
 
